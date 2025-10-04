@@ -1,0 +1,90 @@
+import random, json, os
+
+class Level100AI:
+    def __init__(self):
+        self.memory = self.load_memory()
+        self.name = self.memory.get("user_name")
+        self.skills = ["chat","math","games","web_search","reminders","automation","entertainment"]
+        self.voice_enabled = True
+        self.gui_enabled = True
+        self.api_enabled = True
+
+    def load_memory(self):
+        if os.path.exists("level100_ai_memory.json"):
+            with open("level100_ai_memory.json","r") as f:
+                return json.load(f)
+        return {}
+
+    def save_memory(self):
+        with open("level100_ai_memory.json","w") as f:
+            json.dump(self.memory,f)
+
+    def speak(self,text):
+        # Integrate with pyttsx3 or TTS engine
+        print(f"AI (speaks): {text}")
+
+    def listen(self):
+        # Integrate with speech_recognition or voice input
+        return input("You (voice/text): ")
+
+    def greet_user(self):
+        if self.name:
+            self.speak(f"Welcome back, {self.name}!")
+        else:
+            self.name = input("AI: Tumhara naam kya hai? ")
+            self.memory["user_name"] = self.name
+            self.save_memory()
+            self.speak(f"Nice to meet you, {self.name}!")
+
+    def web_search(self, query):
+        self.speak(f"Searching the web for {query}...")
+        # Connect to APIs to fetch live data
+
+    def set_reminder(self, task, time):
+        self.speak(f"Reminder set for {task} at {time}.")
+
+    def math_solver(self, expr):
+        try:
+            result = eval(expr)
+            self.speak(f"Result: {result}")
+        except:
+            self.speak("Cannot solve this.")
+
+    def adaptive_response(self, user_input):
+        responses = [
+            "Interesting! 😎",
+            "Wow, I need to think about this!",
+            "Hmm, let’s figure this out together.",
+            "I am learning from this input!"
+        ]
+        self.speak(random.choice(responses))
+
+    def process_input(self, user_input):
+        if "calculate" in user_input:
+            expr = input("Enter math expression: ")
+            self.math_solver(expr)
+        elif "choose" in user_input:
+            options = input("Enter options comma separated: ").split(",")
+            self.speak(f"My choice is {random.choice([o.strip() for o in options])}")
+        elif "search" in user_input:
+            query = input("What to search? ")
+            self.web_search(query)
+        elif "reminder" in user_input:
+            task = input("Task: ")
+            time = input("Time: ")
+            self.set_reminder(task,time)
+        else:
+            self.adaptive_response(user_input)
+
+    def run(self):
+        self.greet_user()
+        while True:
+            user_input = self.listen()
+            if "exit" in user_input:
+                self.speak("Goodbye! See you later. 😎")
+                break
+            self.process_input(user_input)
+
+# Initialize AI
+ai = Level100AI()
+# ai.run()  # Uncomment to run full interactive AI
